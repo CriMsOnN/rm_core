@@ -2,6 +2,10 @@ local appearance = {}
 appearance.skin = {}
 appearance.outfit = {}
 
+function RMCore.Functions.getPlayerData()
+    return RMCore.playerData
+end
+
 function RMCore.Functions.loadModel(model)
     if type(model) ~= "number" then model = GetHashKey(model) end
     if not HasModelLoaded(model) then
@@ -109,9 +113,9 @@ function RMCore.Functions.defaultTorsoAndLegs(ped, value)
         if pedType == "male" then maleTexture = GetHashKey("MP_head_mr1_sc05_c0_000_ab") end
         if pedType == "female" then femaleTexture = GetHashKey("MP_head_fr1_sc05_c0_000_ab") end
     end
-    lib.natives.ApplyShopItemToPed(ped, legs, false, true, true)
-    lib.natives.ApplyShopItemToPed(ped, torso, false, true, true)
-    lib.natives.ClearSomething(ped)
+    Natives.ApplyShopItemToPed(ped, legs, false, true, true)
+    Natives.ApplyShopItemToPed(ped, torso, false, true, true)
+    Natives.ClearSomething(ped)
     if pedType == "male" then
         return maleTexture
     else
@@ -151,8 +155,8 @@ function RMCore.Functions.renderPed(ped, data)
             if pedType == "female" then texture_types.female.albedo = texture end
         elseif splitString == "features" then
             local _, featureName = string.strsplit("_", data.name, 2)
-            local hash = Shared.Features[featureName]
-            Natives.ApplyShopItemToPed(ped, hash, data.value / 100)
+            local hash = Shared.features[featureName]
+            Natives.SetPedFaceFeature(ped, hash, data.value / 100)
         else
             local component = skins[data.name][data.value]
             Natives.ApplyShopItemToPed(ped, component, false, true, true)

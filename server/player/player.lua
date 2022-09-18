@@ -36,8 +36,38 @@ function Player.init(source, identifier)
         return player.userid
     end
 
-    function player.setCharacters(characters)
-        player.characters = characters
+    function player.setJob(job, job_grade)
+        player.job = {
+            job_name = job,
+            job_grade = job_grade
+        }
+    end
+
+    function player.login(playerData)
+        player.firstname = playerData.firstname
+        player.lastname = playerData.lastname
+        player.skin = playerData.skin
+        player.sex = playerData.sex
+        player.outfit = playerData.outfit
+        player.status = playerData.status
+        player.coords = vector3(playerData.coords.x, playerData.coords.y, playerData.coords.z)
+        player.job = {
+            job_name = playerData.job,
+            job_grade = playerData.job_grade
+        }
+        TriggerClientEvent("rm:playerLogin", player.source, player)
+    end
+
+    function player.getJob()
+        return player.job
+    end
+
+    -- function player.setCharacters(characters)
+    --     player.characters = characters
+    -- end
+
+    function player.addCharacter(character)
+        table.insert(player.characters, character)
     end
 
     Players[player.source] = player

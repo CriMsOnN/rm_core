@@ -61,6 +61,7 @@ end)
 
 
 RegisterNetEvent("rm:playerSpawned", function(characters)
+    RMCore.isLoading = true
     Wait(10000)
     local ped = PlayerPedId()
     DisplayRadar(false)
@@ -97,6 +98,7 @@ RegisterNetEvent("rm:playerSpawned", function(characters)
     DoScreenFadeIn(1000)
     Wait(Config.characterSelection.cameraInterp)
 
+    print(json.encode(characters, { indent = true }))
     SendNUIMessage({
         action = "setCharacters",
         data = {
@@ -109,7 +111,7 @@ end)
 RegisterNUICallback('createCharacter', function(data, cb)
     SetNuiFocus(false, false)
     cb(true)
-    local model = data.gender == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
+    local model = data.sex == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
     RMCore.Functions.loadModel(model)
     SetPlayerModel(PlayerId(), model, false)
     local ped = PlayerPedId()
@@ -127,6 +129,48 @@ RegisterNUICallback('createCharacter', function(data, cb)
         clothes = true,
         skins = true
     }, data, creatorCamera)
+end)
+
+RegisterNUICallback('selectCharacter', function(data, cb)
+    DoScreenFadeOut(10)
+    SetNuiFocus(false, false)
+    TriggerServerEvent('rm:playerLogin', data.charid)
+    cb(true)
+end)
+
+RegisterNetEvent("rm:playerLogin", function(playerData)
+    ClearFocus()
+    local model = playerData.sex == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
+    RMCore.Functions.loadModel(model)
+    SetPlayerModel(PlayerId(), model, false)
+    ped = PlayerPedId()
+    Natives.EquipMetaPedOutfitPreset(ped, 0, 0)
+    Natives.RemoveTagFromMetaPed(PlayerPedId(), 0x1D4C528A, 0)
+    Natives.RemoveTagFromMetaPed(PlayerPedId(), 0x3F1F01E5, 0)
+    Natives.RemoveTagFromMetaPed(PlayerPedId(), 0xDA0E2C55, 0)
+    SetModelAsNoLongerNeeded(model)
+    RMCore.Functions.fixClothes(ped)
+    for k, v in pairs(playerData.skin) do
+        v.name = k
+        RMCore.Functions.renderPed(ped, v)
+    end
+
+    for k, v in pairs(playerData.outfit.components) do
+        v.name = k
+        RMCore.Functions.renderPed(ped, v)
+    end
+
+    RMCore.isLoading = false
+    RMCore.playerData = playerData
+    DestroyAllCams(true)
+    SetEntityCoords(PlayerPedId(), playerData.coords.x, playerData.coords.y, playerData.coords.z)
+    StartPlayerTeleport(PlayerId(), playerData.coords.x, playerData.coords.y, playerData.coords.z,
+        math.random(-90.0, 90.0),
+        false, false, false)
+    while IsPlayerTeleportActive() do Wait(0) end
+    DoScreenFadeIn(1000)
+    while IsScreenFadingIn() do Wait(0) end
+    Wait(1000)
 end)
 
 

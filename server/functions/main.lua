@@ -9,3 +9,7 @@ function RMCore.Functions.getIdentifiers(source)
 
     return identifiers
 end
+
+function RMCore.Functions.getPlayer(source)
+    return Players[source]
+end

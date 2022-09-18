@@ -1,4 +1,5 @@
 import { Button, Center, Divider, Flex } from '@chakra-ui/react';
+import { useVisibility } from '../providers/VisibilityProvider';
 import { fetchNui } from '../utils/fetchNui';
 import { CharacterButtons, CharacterDetails } from './styles';
 
@@ -21,9 +22,9 @@ const Character: React.FC<Props> = ({
   charid,
   setOpenDelete,
 }) => {
+  const visibility = useVisibility();
   const handleSelect = () => {
-    // setOpenCreateCharacter(true);
-    console.log(charid);
+    visibility.setVisible(false);
     fetchNui('selectCharacter', { charid });
   };
 
