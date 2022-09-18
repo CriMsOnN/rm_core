@@ -52,23 +52,23 @@ function RMCore.Functions.fixClothes(ped)
     local pedType = IsPedMale(ped) and "male" or "female"
     while not Natives.IsPedReadyToRender(ped) do Wait(0) end
     if pedType == "male" then
-        Natives.ApplyShopItemToPed(ped, 0x158cb7f2, true, true, true); --head
-        Natives.ApplyShopItemToPed(ped, 361562633, true, true, true); --hair
-        Natives.ApplyShopItemToPed(ped, 62321923, true, true, true); --hand
-        Natives.ApplyShopItemToPed(ped, 3550965899, true, true, true); --legs
-        Natives.ApplyShopItemToPed(ped, 612262189, true, true, true); --Eye
-        Natives.ApplyShopItemToPed(ped, 319152566, true, true, true); --
-        Natives.ApplyShopItemToPed(ped, 0x2CD2CB71, true, true, true); -- shirt
-        Natives.ApplyShopItemToPed(ped, 0x151EAB71, true, true, true); -- bots
-        Natives.ApplyShopItemToPed(ped, 0x1A6D27DD, true, true, true); -- pants
+        Natives.ApplyShopItemToPed(ped, 0x158cb7f2, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 361562633, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 62321923, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 3550965899, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 612262189, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 319152566, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x2CD2CB71, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x151EAB71, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x1A6D27DD, true, true, true)
     else
-        Natives.ApplyShopItemToPed(ped, 0x1E6FDDFB, true, true, true); -- head
-        Natives.ApplyShopItemToPed(ped, 272798698, true, true, true); -- hair
-        Natives.ApplyShopItemToPed(ped, 869083847, true, true, true); -- Eye
-        Natives.ApplyShopItemToPed(ped, 736263364, true, true, true); -- hand
-        Natives.ApplyShopItemToPed(ped, 0x193FCEC4, true, true, true); -- shirt
-        Natives.ApplyShopItemToPed(ped, 0x285F3566, true, true, true); -- pants
-        Natives.ApplyShopItemToPed(ped, 0x134D7E03, true, true, true); -- bots
+        Natives.ApplyShopItemToPed(ped, 0x1E6FDDFB, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 272798698, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 869083847, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 736263364, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x193FCEC4, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x285F3566, true, true, true)
+        Natives.ApplyShopItemToPed(ped, 0x134D7E03, true, true, true)
     end
 end
 
@@ -172,5 +172,4 @@ function RMCore.Functions.renderPed(ped, data)
     Citizen.InvokeNative(0xaab86462966168ce, ped, true) -- i dont know what this is doing
     Citizen.InvokeNative(0x704c908e9c405136, ped) -- i dont know what this is doing
     Citizen.InvokeNative(0x59BD177A1A48600A, ped, 1) -- i dont know what this is doing
-    return p
 end
