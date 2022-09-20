@@ -1,11 +1,10 @@
 RMCore = {}
 RMCore.Functions = {}
 
--- local loadModel = load_module('utils/loadModel')
-
 local staticCamera = nil
-local utils = require 'utils/{loadModel,createCam,instancePlayer}'
-local clothes = require 'preload/{fixClothes,renderPed}'
+local utils <const> = require 'utils/{loadModel,createCam,instancePlayer}'
+local clothes <const> = require 'preload/{fixClothes,renderPed}'
+local cache <const> = require 'cache'
 
 SetTimeout(500, function()
     Natives.DisplayLoadingScreens(0, 0, 0, "You are loading please wait", "", "")
@@ -20,6 +19,12 @@ SetTimeout(500, function()
     exports.spawnmanager:setAutoSpawn(false)
     TriggerServerEvent("rm:playerSpawned")
     TriggerServerEvent("queue:dequeuePlayer")
+    cache.setCache('test', 'test')
+    cache.addCacheListener('test', function(oldValue, newValue)
+        print(oldValue, newValue)
+    end)
+    cache.setCache('test', 'test2')
+    cache.setCache('test', 'test3')
 end)
 
 

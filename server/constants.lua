@@ -1,4 +1,4 @@
-Constants = {
+local Constants = {
     GET_USERID = ('SELECT userid FROM users WHERE identifier = ?'),
     CREATE_USER = "INSERT INTO users(username, identifier) VALUES(?, ?)",
     GET_CHARACTERS = "SELECT charid, firstname, lastname, dateofbirth, skin, job, sex FROM characters WHERE userid = ?",
@@ -8,3 +8,5 @@ Constants = {
     GET_ACTIVEOUTFIT = "SELECT * FROM characters_outfits WHERE charid = ? AND active = ?",
     GET_WHITELIST = "SELECT * FROM whitelist WHERE identifier = ?",
 }
+
+return Constants

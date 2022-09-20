@@ -30,12 +30,7 @@ client_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/tables/init.lua',
-    'server/constants.lua',
-    'server/db.lua',
-    'server/player/player.db.lua',
-    'server/player/player.lua',
     'server/main.lua',
-    'server/functions/main.lua',
     'server/connecting.lua',
 }
 

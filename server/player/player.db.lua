@@ -1,5 +1,7 @@
-PlayerDB = {}
+local PlayerDB = {}
 local MySQL = MySQL
+
+local Constants <const> = requireLocal 'constants'
 
 function PlayerDB.getPlayerFromIdentifier(identifier)
     local results = MySQL.scalar.await(Constants.GET_USERID, { identifier })
@@ -70,3 +72,5 @@ function PlayerDB.getCharacter(charid)
     local character = MySQL.single.await(Constants.GET_CHARACTER, { charid })
     return character
 end
+
+return PlayerDB

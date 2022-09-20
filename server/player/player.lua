@@ -1,5 +1,7 @@
-Player = {}
-Players = {}
+local Player = {}
+local Players = {}
+
+local PlayerDB <const> = requireLocal 'player/player.db'
 
 function Player.init(source, identifier)
     local id = PlayerDB.getPlayerFromIdentifier(identifier)
@@ -8,68 +10,71 @@ function Player.init(source, identifier)
         id = PlayerDB.createPlayer(source, identifier)
     end
 
-    local player = {
+    local self = {
         source = source,
         userid = id,
         username = GetPlayerName(source),
         identifier = identifier
     }
 
-    function player.getIdentifier()
-        return player.identifier
+    function self.getIdentifier()
+        return self.identifier
     end
 
-    function player.setOutfit(outfit)
+    function self.setOutfit(outfit)
         if type(outfit) ~= "string" then outfit = json.encode(outfit) end
-        player.outfit = outfit
+        self.outfit = outfit
     end
 
-    function player.getOutfit()
-        return player.outfit and json.decode(player.outfit)
+    function self.getOutfit()
+        return self.outfit and json.decode(self.outfit)
     end
 
-    function player.getName()
-        return player.username
+    function self.getName()
+        return self.username
     end
 
-    function player.getUserid()
-        return player.userid
+    function self.getUserid()
+        return self.userid
     end
 
-    function player.setJob(job, job_grade)
-        player.job = {
+    function self.setJob(job, job_grade)
+        self.job = {
             job_name = job,
             job_grade = job_grade
         }
     end
 
-    function player.login(playerData)
-        player.firstname = playerData.firstname
-        player.lastname = playerData.lastname
-        player.skin = playerData.skin
-        player.sex = playerData.sex
-        player.outfit = playerData.outfit
-        player.status = playerData.status
-        player.coords = vector3(playerData.coords.x, playerData.coords.y, playerData.coords.z)
-        player.job = {
+    function self.login(playerData)
+        self.firstname = playerData.firstname
+        self.lastname = playerData.lastname
+        self.skin = playerData.skin
+        self.sex = playerData.sex
+        self.outfit = playerData.outfit
+        self.status = playerData.status
+        self.coords = vector3(playerData.coords.x, playerData.coords.y, playerData.coords.z)
+        self.job = {
             job_name = playerData.job,
             job_grade = playerData.job_grade
         }
-        TriggerClientEvent("rm:playerLogin", player.source, player)
+        TriggerClientEvent("rm:playerLogin", self.source, self)
     end
 
-    function player.getJob()
-        return player.job
+    function self.getJob()
+        return self.job
     end
 
-    -- function player.setCharacters(characters)
-    --     player.characters = characters
-    -- end
-
-    function player.addCharacter(character)
-        table.insert(player.characters, character)
+    function self.addCharacter(character)
+        table.insert(self.characters, character)
     end
 
-    Players[player.source] = player
-    return player
+    Players[self.source] = self
+    return self
 end
+
+function Player.getInstance(source)
+    return Players[source]
+end
+
+exports('getPlayer', Player.getInstance)
+return Player

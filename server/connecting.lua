@@ -1,8 +1,12 @@
 local loadingPlayers = {}
 exports('getLoadingPlayers', function() return loadingPlayers end)
+
+local DB <const> = requireLocal 'db'
+local utils <const> = require 'utils'
+
 exports('playerConnecting', function(source, name, reason, deferrals)
     local _src = source
-    local identifiers = RMCore.Functions.getIdentifiers(_src)
+    local identifiers = utils.getIdentifiers(_src)
     local identifier = identifiers[Config.defaultIdentifier]
 
     deferrals.update("Checking your identifiers..")
@@ -35,7 +39,7 @@ end)
 
 AddEventHandler("playerJoining", function(source)
     local _src = source
-    local identifiers = RMCore.Functions.getIdentifiers(_src)
+    local identifiers = utils.getIdentifiers(_src)
     local loadingPlayer = loadingPlayers[identifiers[Config.defaultIdentifier]]
     if loadingPlayer then
         loadingPlayers[identifiers[Config.defaultIdentifier]] = nil
