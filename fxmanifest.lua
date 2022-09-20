@@ -16,6 +16,7 @@ dependencies {
 }
 
 shared_scripts {
+    '@rm_lib/require.lua',
     'shared/*.lua',
     'clothes.lua',
     'overlays.lua'
@@ -28,6 +29,7 @@ client_scripts {
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
+    'server/tables/init.lua',
     'server/constants.lua',
     'server/db.lua',
     'server/player/player.db.lua',

@@ -2,7 +2,6 @@ RMCore = {}
 RMCore.Functions = {}
 
 exports('getCore', function() return Core end)
-
 RegisterServerEvent("rm:playerSpawned", function()
     local _src = source
     local player = Players[_src]

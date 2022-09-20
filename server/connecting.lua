@@ -1,8 +1,7 @@
 local loadingPlayers = {}
-
-AddEventHandler('playerConnecting', function(name, reason, deferrals)
+exports('getLoadingPlayers', function() return loadingPlayers end)
+exports('playerConnecting', function(source, name, reason, deferrals)
     local _src = source
-    deferrals.defer()
     local identifiers = RMCore.Functions.getIdentifiers(_src)
     local identifier = identifiers[Config.defaultIdentifier]
 
@@ -10,11 +9,13 @@ AddEventHandler('playerConnecting', function(name, reason, deferrals)
     Wait(100)
     if not identifier then
         deferrals.done('You need to have steam open to player on this server!')
+        exports.rm_queue:removePlayerFromQueue(identifier)
         return
     end
 
     if loadingPlayers[identifier] then
         deferrals.done('You are already connecting to the server!')
+        exports.rm_queue:removePlayerFromQueue(identifier)
         return
     end
 
@@ -23,18 +24,20 @@ AddEventHandler('playerConnecting', function(name, reason, deferrals)
     local whitelisted = DB.isWhitelisted(identifier)
     if not whitelisted then
         deferrals.done('You are not whitelisted on this server!')
+        exports.rm_queue:removePlayerFromQueue(identifier)
         return
     end
     local player = Player.init(_src, identifier)
-    loadingPlayers[player.source] = player
+    loadingPlayers[identifier] = player
     deferrals.done()
 end)
 
+
 AddEventHandler("playerJoining", function(source)
     local _src = source
-    local loadingPlayer = loadingPlayers[_src]
-
+    local identifiers = RMCore.Functions.getIdentifiers(_src)
+    local loadingPlayer = loadingPlayers[identifiers[Config.defaultIdentifier]]
     if loadingPlayer then
-        loadingPlayers[source] = nil
+        loadingPlayers[identifiers[Config.defaultIdentifier]] = nil
     end
 end)

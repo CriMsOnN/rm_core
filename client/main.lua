@@ -1,49 +1,11 @@
 RMCore = {}
 RMCore.Functions = {}
+
+-- local loadModel = load_module('utils/loadModel')
+
 local staticCamera = nil
-Clothes = {
-    male = {},
-    female = {}
-}
-
-Skins = {
-    male = {},
-    female = {}
-}
-
-function insert(tbl, value)
-    tbl[#tbl + 1] = value
-end
-
-CreateThread(function()
-    for _, v in pairs(pedClothes.female) do
-        if v.category_hashname == "heads" or v.category_hashname == "eyes" or v.category_hashname == "bodies_upper" or
-            v.category_hashname == "bodies_lower" or
-            v.category_hashname == "hair" then
-            if Skins.female[v.category_hashname] == nil then Skins.female[v.category_hashname] = {} end
-            local category = Skins.female[v.category_hashname]
-            insert(category, v.hash)
-        else
-            if Clothes.female[v.category_hashname] == nil then Clothes.female[v.category_hashname] = {} end
-            local category = Clothes.female[v.category_hashname]
-            insert(category, v.hash)
-        end
-    end
-
-    for _, v in pairs(pedClothes.male) do
-        if v.category_hashname == "heads" or v.category_hashname == "eyes" or v.category_hashname == "bodies_upper" or
-            v.category_hashname == "bodies_lower" or v.category_hashname == "beards_complete" or
-            v.category_hashname == "hair" then
-            if Skins.male[v.category_hashname] == nil then Skins.male[v.category_hashname] = {} end
-            local category = Skins.male[v.category_hashname]
-            insert(category, v.hash)
-        else
-            if Clothes.male[v.category_hashname] == nil then Clothes.male[v.category_hashname] = {} end
-            local category = Clothes.male[v.category_hashname]
-            insert(category, v.hash)
-        end
-    end
-end)
+local utils = require 'utils/{loadModel,createCam,instancePlayer}'
+local clothes = require 'preload/{fixClothes,renderPed}'
 
 SetTimeout(500, function()
     Natives.DisplayLoadingScreens(0, 0, 0, "You are loading please wait", "", "")
@@ -57,6 +19,7 @@ SetTimeout(500, function()
     })
     exports.spawnmanager:setAutoSpawn(false)
     TriggerServerEvent("rm:playerSpawned")
+    TriggerServerEvent("queue:dequeuePlayer")
 end)
 
 
@@ -72,10 +35,10 @@ RegisterNetEvent("rm:playerSpawned", function(characters)
     SetEntityCoords(ped, Config.characterSelection.pedSpawn.x, Config.characterSelection.pedSpawn.y,
         Config.characterSelection.pedSpawn.z)
     SetEntityHeading(ped, Config.characterSelection.pedSpawn.w)
-    RMCore.Functions.instancePlayer(true)
+    utils.instancePlayer(true)
     NetworkClockTimeOverride(12, 0, 0)
     local model = characters[1].sex == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
-    RMCore.Functions.loadModel(model)
+    utils.loadModel(model)
     SetPlayerModel(PlayerId(), model, false)
     ped = PlayerPedId()
     Natives.EquipMetaPedOutfitPreset(ped, 0, 0)
@@ -83,10 +46,10 @@ RegisterNetEvent("rm:playerSpawned", function(characters)
     Natives.RemoveTagFromMetaPed(PlayerPedId(), 0x3F1F01E5, 0)
     Natives.RemoveTagFromMetaPed(PlayerPedId(), 0xDA0E2C55, 0)
     SetModelAsNoLongerNeeded(model)
-    RMCore.Functions.fixClothes(ped)
-    local initialCamera = RMCore.Functions.createCam(Config.characterSelection.initialCamera.coords,
+    clothes:fixClothes(ped)
+    local initialCamera = utils.createCam(Config.characterSelection.initialCamera.coords,
         Config.characterSelection.initialCamera.rot, true)
-    staticCamera = RMCore.Functions.createCam(Config.characterSelection.staticCamera.coords,
+    staticCamera = utils.createCam(Config.characterSelection.staticCamera.coords,
         Config.characterSelection.staticCamera.rot)
     ShutdownLoadingScreen()
     Wait(2000)
@@ -98,7 +61,6 @@ RegisterNetEvent("rm:playerSpawned", function(characters)
     DoScreenFadeIn(1000)
     Wait(Config.characterSelection.cameraInterp)
 
-    print(json.encode(characters, { indent = true }))
     SendNUIMessage({
         action = "setCharacters",
         data = {
@@ -112,7 +74,7 @@ RegisterNUICallback('createCharacter', function(data, cb)
     SetNuiFocus(false, false)
     cb(true)
     local model = data.sex == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
-    RMCore.Functions.loadModel(model)
+    utils.loadModel(model)
     SetPlayerModel(PlayerId(), model, false)
     local ped = PlayerPedId()
     Natives.EquipMetaPedOutfitPreset(ped, 0, 0)
@@ -120,9 +82,9 @@ RegisterNUICallback('createCharacter', function(data, cb)
     Natives.RemoveTagFromMetaPed(ped, 0x3F1F01E5, 0)
     Natives.RemoveTagFromMetaPed(ped, 0xDA0E2C55, 0)
     SetModelAsNoLongerNeeded(model)
-    RMCore.Functions.fixClothes(ped)
+    clothes:fixClothes(ped)
     local pCoordsOffset = GetOffsetFromEntityInWorldCoords(ped, 0, 2.0, 0)
-    local creatorCamera = RMCore.Functions.createCam(pCoordsOffset, vector3(0.0, 0.0, 0.0))
+    local creatorCamera = utils.createCam(pCoordsOffset, vector3(0.0, 0.0, 0.0))
     SetCamActiveWithInterp(creatorCamera, staticCamera, Config.characterSelection.cameraInterp, 10.0, 10.0)
     Wait(Config.characterSelection.cameraInterp)
     exports.rm_clothing:openClothingMenu({
@@ -141,7 +103,7 @@ end)
 RegisterNetEvent("rm:playerLogin", function(playerData)
     ClearFocus()
     local model = playerData.sex == "male" and GetHashKey("mp_male") or GetHashKey("mp_female")
-    RMCore.Functions.loadModel(model)
+    utils.loadModel(model)
     SetPlayerModel(PlayerId(), model, false)
     ped = PlayerPedId()
     Natives.EquipMetaPedOutfitPreset(ped, 0, 0)
@@ -149,15 +111,18 @@ RegisterNetEvent("rm:playerLogin", function(playerData)
     Natives.RemoveTagFromMetaPed(PlayerPedId(), 0x3F1F01E5, 0)
     Natives.RemoveTagFromMetaPed(PlayerPedId(), 0xDA0E2C55, 0)
     SetModelAsNoLongerNeeded(model)
-    RMCore.Functions.fixClothes(ped)
+    clothes:fixClothes(ped)
+    playerData.skin = type(playerData.skin) == "string" and json.decode(playerData.skin) or playerData.skin
+    playerData.outfit.components = type(playerData.outfit.components) == "string" and
+        json.decode(playerData.outfit.components) or playerData.outfit.components
     for k, v in pairs(playerData.skin) do
         v.name = k
-        RMCore.Functions.renderPed(ped, v)
+        clothes:renderPed(ped, v)
     end
 
     for k, v in pairs(playerData.outfit.components) do
         v.name = k
-        RMCore.Functions.renderPed(ped, v)
+        clothes:renderPed(ped, v)
     end
 
     RMCore.isLoading = false
