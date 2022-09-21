@@ -2,7 +2,6 @@ RMCore = {}
 RMCore.Functions = {}
 local PlayerDB <const> = requireLocal 'player/player.db'
 local Player <const> = requireLocal 'player/player'
-local utils <const> = require 'utils'
 
 exports('getCore', function() return Core end)
 
@@ -10,7 +9,7 @@ RegisterServerEvent("rm:playerSpawned", function()
     local _src = source
     local player = Player.getInstance(_src)
     if not player then
-        local identifiers = utils.getIdentifiers(_src)
+        local identifiers = lib.getIdentifiers(_src)
         player = Player.init(_src, identifiers[Config.defaultIdentifier])
     end
 
@@ -32,7 +31,7 @@ end)
 
 RegisterServerEvent("rm:playerLogin", function(charid)
     local _src = source
-    local player = utils.getPlayer(_src)
+    local player = Player.getInstance(_src)
     if player then
         local character = PlayerDB.getCharacter(charid)
         local outfit = PlayerDB.getActiveOutfit(charid)
@@ -49,7 +48,7 @@ end)
 
 RegisterServerEvent("rm:newCharacter", function(playerData)
     local _src = source
-    local player = RMCore.Functions.getPlayer(_src)
+    local player = Player.getInstance(_src)
     if player then
         playerData.userid = player.getUserid()
         local userData = PlayerDB.createCharacter(playerData)

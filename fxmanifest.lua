@@ -16,8 +16,9 @@ dependencies {
 }
 
 shared_scripts {
-    '@rm_lib/require.lua',
-    'shared/*.lua',
+    '@ox_lib/init.lua',
+    '@ox_lib/natives.lua',
+    'shared/config.lua',
     'clothes.lua',
     'overlays.lua'
 }
@@ -37,6 +38,7 @@ server_scripts {
 ui_page 'web/build/index.html'
 
 files {
+    'import.lua',
     'web/build/index.html',
     'web/build/**/*',
 }

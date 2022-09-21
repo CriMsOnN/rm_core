@@ -57,7 +57,15 @@ function Player.init(source, identifier)
             job_name = playerData.job,
             job_grade = playerData.job_grade
         }
-        TriggerClientEvent("rm:playerLogin", self.source, self)
+        TriggerClientEvent("rm:playerLogin", self.source, {
+            firstname = self.firstname,
+            lastname = self.lastname,
+            coords = lib.toVector3(playerData.coords),
+            job = self.job,
+            outfit = self.outfit,
+            sex = self.sex,
+            skin = self.skin
+        })
     end
 
     function self.getJob()

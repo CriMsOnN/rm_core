@@ -1,6 +1,8 @@
 import { Button, Center, Divider, Flex } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useVisibility } from '../providers/VisibilityProvider';
 import { fetchNui } from '../utils/fetchNui';
+import PlayerConfirmationDialog from './Dialogs/PlayerConfirmationDialog';
 import { CharacterButtons, CharacterDetails } from './styles';
 
 type Props = {
@@ -22,14 +24,22 @@ const Character: React.FC<Props> = ({
   charid,
   setOpenDelete,
 }) => {
+  const [openSelection, setOpenSelection] = useState<boolean>(false);
   const visibility = useVisibility();
-  const handleSelect = () => {
+
+  const play = () => {
     visibility.setVisible(false);
     fetchNui('selectCharacter', { charid });
+    setOpenSelection(false);
   };
 
   const handleDelete = () => {
     setOpenDelete(true);
+  };
+
+  const openSelect = () => {
+    fetchNui('previewCharacter', { charid });
+    setOpenSelection(true);
   };
 
   return (
@@ -62,13 +72,21 @@ const Character: React.FC<Props> = ({
         <Divider />
       </CharacterDetails>
       <CharacterButtons>
-        <Button colorScheme="whatsapp" size="sm" onClick={handleSelect}>
+        <Button colorScheme="whatsapp" size="sm" onClick={openSelect}>
           SELECT
         </Button>
         <Button colorScheme="red" size="sm" onClick={handleDelete}>
           DELETE
         </Button>
       </CharacterButtons>
+      {openSelection && (
+        <PlayerConfirmationDialog
+          setOpenSelection={setOpenSelection}
+          firstname={firstname}
+          lastname={lastname}
+          onPlay={play}
+        />
+      )}
     </>
   );
 };

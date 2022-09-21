@@ -1,5 +1,5 @@
 local Constants = {
-    GET_USERID = ('SELECT userid FROM users WHERE identifier = ?'),
+    GET_USERID = 'SELECT userid FROM users WHERE identifier = ?',
     CREATE_USER = "INSERT INTO users(username, identifier) VALUES(?, ?)",
     GET_CHARACTERS = "SELECT charid, firstname, lastname, dateofbirth, skin, job, sex FROM characters WHERE userid = ?",
     GET_CHARACTER = "SELECT * FROM characters WHERE charid = ?",
