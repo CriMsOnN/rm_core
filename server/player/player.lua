@@ -64,8 +64,10 @@ function Player.init(source, identifier)
             job = self.job,
             outfit = self.outfit,
             sex = self.sex,
-            skin = self.skin
+            skin = self.skin,
+            status = self.status
         })
+        TriggerEvent("rm:playerLoginServer", self.source)
     end
 
     function self.getJob()
@@ -74,6 +76,38 @@ function Player.init(source, identifier)
 
     function self.addCharacter(character)
         table.insert(self.characters, character)
+    end
+
+    function self.setCoords(coords)
+        if type(coords) ~= "vector3" then coords = lib.toVector3(coords) end
+        self.coords = coords
+    end
+
+    function self.getCoords(coords)
+        return self.coords
+    end
+
+    function self.removeStatus(statusType, statusValue)
+        print(statusType, statusValue)
+        if self.status[statusType] then
+            self.status[statusType] = self.status[statusType] - statusValue
+            if self.status[statusType] < 0 then self.status[statusType] = 0 end
+            TriggerClientEvent("status:updateStatus", self.source, statusType, self.status[statusType])
+        end
+    end
+
+    function self.addStatus(statusType, statusValue)
+        if self.status[statusType] then
+            self.status[statusType] = self.status[statusType] + statusValue
+            TriggerClientEvent("status:updateStatus", self.source, statusType, self.status[statusType])
+        end
+    end
+
+    function self.createStatus(statusType, statusValue)
+        if not self.status[statusType] then
+            self.status[statusType] = statusValue
+            TriggerClientEvent('rm_status:create', self.source, statusType, statusValue)
+        end
     end
 
     Players[self.source] = self
@@ -85,4 +119,9 @@ function Player.getInstance(source)
 end
 
 exports('getPlayer', Player.getInstance)
+exports('getPlayers', function()
+    return Players
+end)
+
+
 return Player

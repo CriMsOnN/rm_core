@@ -55,3 +55,11 @@ RegisterServerEvent("rm:newCharacter", function(playerData)
         player.login(userData)
     end
 end)
+
+RegisterServerEvent("rm:updateCoords", function(coords)
+    local _src = source
+    local player = Player.getInstance(_src)
+    if player then
+        player.setCoords(coords)
+    end
+end)

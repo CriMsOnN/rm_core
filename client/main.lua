@@ -1,18 +1,16 @@
 RMCore = {
     isLoading = false,
-    exports = {}
+    isLoggedIn = false,
+    playerData = {},
+    Functions = {}
 }
-
-exports('getFunctions', function()
-    return RMCore.exports
-end)
 
 RMCore.Functions = setmetatable({}, {
     __newindex = function(self, key, value)
-        RMCore.exports[key] = true
         exports(key, value)
     end
 })
+
 
 local staticCamera = nil
 
@@ -193,7 +191,16 @@ RegisterNetEvent("rm:playerLogin", function(playerData)
     DisplayRadar(false)
     Natives.ShowPlayerCores(false)
     SetMinimapType(3)
+    RMCore.isLoggedIn = true
+    startCoordsUpdate()
 end)
+
+function startCoordsUpdate()
+    while isLoggedIn do
+        Wait(60000)
+        TriggerServerEvent("rm:updateCoords", GetEntityCoords(cache.ped))
+    end
+end
 
 CreateThread(function()
     while true do

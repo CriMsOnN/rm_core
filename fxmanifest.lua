@@ -39,6 +39,7 @@ ui_page 'web/build/index.html'
 
 files {
     'import.lua',
+    'dataview.lua',
     'web/build/index.html',
     'web/build/**/*',
 }
