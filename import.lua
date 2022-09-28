@@ -2,6 +2,12 @@ if not IsDuplicityVersion() then
     Client = {
         playerData = {},
         isLoading = true,
+        getState = function(key)
+            return LocalState.state[key]
+        end,
+        setState = function(key, value, replicate)
+            return LocalState.state:set(key, value, replicate)
+        end
     }
 
     RegisterNetEvent("rm:playerLogin", function(playerData)
@@ -23,12 +29,12 @@ if not IsDuplicityVersion() then
             Client.playerData.currency[cType] = cAmount
         end
     end)
-    
+
 
     RegisterNetEvent("rm:setInventory", function(inventory)
         Client.playerData.inventory = inventory
     end)
-    
+
 else
     RMCore = {}
 
@@ -61,5 +67,4 @@ else
     function RMCore.getAllPlayers()
         return exports.rm_core:getPlayers()
     end
-    
 end

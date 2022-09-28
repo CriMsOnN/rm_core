@@ -1,21 +1,29 @@
+local PlayerState = Player
 local Player = {}
 local Players = {}
 
-local PlayerDB <const> = requireLocal 'player/player.db'
+local PlayerDB <const> = require 'player/player.db'
 
 function Player.init(source, identifier)
-    local id = PlayerDB.getPlayerFromIdentifier(identifier)
+    local user = PlayerDB.getPlayerFromIdentifier(identifier)
 
-    if not id then
-        id = PlayerDB.createPlayer(source, identifier)
+    if not user then
+        user = {
+            userid = PlayerDB.createPlayer(source, identifier),
+            permissions = 'user'
+        }
     end
+
 
     local self = {
         source = source,
-        userid = id,
+        userid = user.userid,
         username = GetPlayerName(source),
-        identifier = identifier
+        identifier = identifier,
+        permissions = user.permissions,
     }
+
+    lib.addPrincipal(self.source, 'group.' .. self.permissions)
 
     function self.getIdentifier()
         return self.identifier
@@ -68,10 +76,20 @@ function Player.init(source, identifier)
             status = self.status
         })
         TriggerEvent("rm:playerLoginServer", self.source)
+        local state = PlayerState(self.source).state
+        for k, v in pairs(self.status) do
+            state:set(k, v, true)
+        end
     end
 
     function self.getJob()
         return self.job
+    end
+
+    function self.setPermission(permission)
+        lib.removePrincipal(self.source, 'group.' .. self.permissions)
+        lib.addPrincipal(self.source, 'group.' .. permission)
+        self.permission = permission
     end
 
     function self.addCharacter(character)
@@ -88,18 +106,17 @@ function Player.init(source, identifier)
     end
 
     function self.removeStatus(statusType, statusValue)
-        print(statusType, statusValue)
         if self.status[statusType] then
             self.status[statusType] = self.status[statusType] - statusValue
             if self.status[statusType] < 0 then self.status[statusType] = 0 end
-            TriggerClientEvent("status:updateStatus", self.source, statusType, self.status[statusType])
+            return self.status[statusType]
         end
     end
 
     function self.addStatus(statusType, statusValue)
         if self.status[statusType] then
             self.status[statusType] = self.status[statusType] + statusValue
-            TriggerClientEvent("status:updateStatus", self.source, statusType, self.status[statusType])
+            return self.status[statusType]
         end
     end
 
@@ -108,6 +125,12 @@ function Player.init(source, identifier)
             self.status[statusType] = statusValue
             TriggerClientEvent('rm_status:create', self.source, statusType, statusValue)
         end
+    end
+
+    function self.logout()
+        TriggerClientEvent("rm:playerLoggout", self.source)
+        Players[self.source] = nil
+        self = {}
     end
 
     Players[self.source] = self

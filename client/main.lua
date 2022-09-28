@@ -179,7 +179,6 @@ RegisterNetEvent("rm:playerLogin", function(playerData)
     RMCore.isLoading = false
     RMCore.playerData = playerData
     DestroyAllCams(true)
-    SetEntityCoords(PlayerPedId(), playerData.coords.x, playerData.coords.y, playerData.coords.z)
     StartPlayerTeleport(PlayerId(), playerData.coords.x, playerData.coords.y, playerData.coords.z,
         math.random(-90.0, 90.0),
         false, false, false)
@@ -188,11 +187,17 @@ RegisterNetEvent("rm:playerLogin", function(playerData)
     while IsScreenFadingIn() do Wait(0) end
     Wait(1000)
     DisplayHud(true)
-    DisplayRadar(false)
-    Natives.ShowPlayerCores(false)
+    DisplayRadar(true)
+    Natives.ShowPlayerCores(true)
     SetMinimapType(3)
     RMCore.isLoggedIn = true
     startCoordsUpdate()
+end)
+
+RegisterNetEvent("rm:playerLoggout", function()
+    Natives.DisplayLoadingScreens(0, 0, 0, "You are loading please wait", "", "")
+    RMCore.playerData = {}
+    TriggerServerEvent("rm:playerSpawned")
 end)
 
 function startCoordsUpdate()
@@ -228,6 +233,8 @@ exports('getCore', function()
     return RMCore
 end)
 
-AddEventHandler("onResourceStop", function()
-    DestroyAllCams(true)
+AddEventHandler("onResourceStop", function(source)
+    if GetCurrentResourceName() == resource then
+        DestroyAllCams(true)
+    end
 end)

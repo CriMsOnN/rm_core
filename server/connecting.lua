@@ -1,8 +1,8 @@
 local loadingPlayers = {}
 exports('getLoadingPlayers', function() return loadingPlayers end)
 
-local DB <const> = requireLocal 'db'
-local Player <const> = requireLocal 'player/player'
+local DB <const> = require 'db'
+local Player <const> = require 'player/player'
 
 exports('playerConnecting', function(source, name, reason, deferrals)
     local _src = source

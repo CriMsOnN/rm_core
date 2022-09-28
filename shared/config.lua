@@ -24,5 +24,6 @@ Config = {
         thirst = {
             defaultValue = 100
         }
-    }
+    },
+
 }

@@ -1,10 +1,10 @@
 local PlayerDB = {}
 local MySQL = MySQL
 
-local Constants <const> = requireLocal 'constants'
+local Constants <const> = require 'constants'
 
 function PlayerDB.getPlayerFromIdentifier(identifier)
-    local results = MySQL.scalar.await(Constants.GET_USERID, { identifier })
+    local results = MySQL.single.await(Constants.GET_USERID, { identifier })
     return results
 end
 
